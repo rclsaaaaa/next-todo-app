@@ -28,3 +28,11 @@ model Todo {
   userId      String
   user        User     @relation(fields: [userId], references: [id])
 }
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
