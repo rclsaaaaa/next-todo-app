@@ -16,8 +16,10 @@ export const authOptions: NextAuthOptions = {
                     throw new Error("メールアドレスとパスワードを入力してください");
                 }
 
+                // Only select the fields we need to reduce data transfer
                 const user = await prisma.user.findUnique({
                     where: { email: credentials.email },
+                    select: { id: true, email: true, name: true, password: true },
                 });
 
                 if (!user || !user.password) {
