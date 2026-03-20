@@ -52,7 +52,7 @@ model Todo {
   title       String
   description String?
   dueDate     DateTime
-  completed   Boolean  @default(false)
+  status      String   @default("NOT_STARTED")
   createdAt   DateTime @default(now())
   userId      String
   user        User     @relation(fields: [userId], references: [id])

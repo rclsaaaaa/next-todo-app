@@ -27,6 +27,7 @@ export async function createTodo(formData: FormData) {
     const title = formData.get("title") as string
     const dueDateStr = formData.get("dueDate") as string
     const description = formData.get("description") as string
+    const status = formData.get("status") as string || "NOT_STARTED"
 
     if (!title) return { error: "タイトルは必須です" }
 
@@ -38,6 +39,7 @@ export async function createTodo(formData: FormData) {
                 title,
                 description,
                 dueDate,
+                status,
                 userId,
             },
         })
@@ -48,21 +50,6 @@ export async function createTodo(formData: FormData) {
     }
 }
 
-export async function toggleTodo(id: number, completed: boolean) {
-    const userId = await getCurrentUserId()
-
-    // Verify ownership implicitly via where clause with userId
-    const count = await prisma.todo.count({ where: { id, userId } })
-    if (count === 0) return { error: "Not found" }
-
-    await prisma.todo.update({
-        where: { id },
-        data: { completed },
-    })
-    revalidatePath("/")
-    return { success: true }
-}
-
 export async function deleteTodo(id: number) {
     const userId = await getCurrentUserId()
 
@@ -71,6 +58,25 @@ export async function deleteTodo(id: number) {
 
     await prisma.todo.delete({
         where: { id },
+    })
+    revalidatePath("/")
+    return { success: true }
+}
+
+export async function updateTodo(id: number, data: { title?: string; description?: string; dueDate?: string; status?: string }) {
+    const userId = await getCurrentUserId()
+
+    const count = await prisma.todo.count({ where: { id, userId } })
+    if (count === 0) return { error: "Not found" }
+
+    await prisma.todo.update({
+        where: { id },
+        data: {
+            ...(data.title !== undefined && { title: data.title }),
+            ...(data.description !== undefined && { description: data.description }),
+            ...(data.dueDate !== undefined && { dueDate: new Date(data.dueDate) }),
+            ...(data.status !== undefined && { status: data.status }),
+        },
     })
     revalidatePath("/")
     return { success: true }
