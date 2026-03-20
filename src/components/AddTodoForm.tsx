@@ -48,6 +48,15 @@ export function AddTodoForm() {
                     <input name="dueDate" type="date" className="input-field" required defaultValue={new Date().toISOString().split('T')[0]} />
                 </div>
 
+                <div>
+                    <label className="block text-sm font-medium text-slate-600 mb-1">ステータス</label>
+                    <select name="status" className="input-field cursor-pointer bg-white" defaultValue="NOT_STARTED">
+                        <option value="NOT_STARTED">未着手</option>
+                        <option value="IN_PROGRESS">進行中</option>
+                        <option value="COMPLETED">完了</option>
+                    </select>
+                </div>
+
                 <div className="flex gap-4 pt-2">
                     <button
                         type="submit"
